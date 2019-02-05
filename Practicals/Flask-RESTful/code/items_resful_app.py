@@ -1,8 +1,18 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
+from flask_jwt import JWT, jwt_required
+from security import authenticate, identity
 
 app = Flask(__name__)
+app.secret_key = 'rizwan' #key to excrypt the data
 api = Api(app)
+
+jwt =  JWT(app, authenticate, identity)
+# JWT creates a new endpoint '/auth'.
+# When you call /auth, we send username and password
+# JWT get the username and password and sends it to authenticate func.
+#   authenticate function returns the user as 'JWTtoken''
+# JWT then sends 'JWTtoken' is sent to identity func and gets the correct user for that token.
 
 items = []
 
@@ -10,6 +20,7 @@ class Item(Resource):
     '''
     Class to get an item and run the Method accordingly
     '''
+    @jwt_required() # user needs to be authenticated to call this endpoint
     def get(self, name):
         # for item in items:
         #     if item['name'] == name:
