@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse #reqparse - parsing data from payload
 from flask_jwt import JWT, jwt_required
 from security import authenticate, identity
 
@@ -35,12 +35,48 @@ class Item(Resource):
         if next(filter(lambda i: i['name'] == name, items), None):
             return {'message': "Item with name '{}' already exists!".format(name)}, 400
 
-        data = request.get_json() # will give error is data payload is not json
+        data = request.get_json() # will give error if data payload is not json
         # request.get_json(force=True): will process the text, even if the header is not in json format - not recommended
         # request.get_json(silent=True): will return none and does not get an error if payload is not a json
         item = { 'name': name, 'price': data['price'] }
         items.append(item)
         return item, 201 # 201 - status code: - Created
+
+    def delete(self, name):
+        global items # referring to global list 'items'
+        items = list(filter(lambda i:i['name'] != name, items))
+        return {'message':"Item deleted"}
+
+    # This PUT method uses parser, to update only required data from payload
+    def put(self, name):
+        parser = reqparse.RequestParser()
+        parser.add_argument('price',
+            type=float, #data type
+            required=True, #data required
+            help="Field cannot be blank"
+        )
+        data = parser.parse_args()
+        item = next(filter(lambda i:i['name'] == name, items), None) # dict type
+        if item is None:
+            item = {'name': name,
+                    'price': data['price']
+                    }
+            items.append(item)
+        else:
+            item.update(data) #update the item dict with input
+        return item
+    # Another PUT method - This updates the entire PAYLOAD instead of a specific item.
+    # def put(self, name):
+    #     data = request.get_json()
+    #     item = next(filter(lambda i:i['name'] == name, items), None) # dict type
+    #     if item is None:
+    #         item = {'name': name,
+    #                 'price': data['price']
+    #                 }
+    #         items.append(item)
+    #     else:
+    #         item.update(data) #update the item dict with input
+    #     return item
 
 class ItemList(Resource):
     '''
