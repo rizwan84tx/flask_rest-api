@@ -11,8 +11,8 @@ create_item_table = "CREATE TABLE IF NOT EXISTS items(name text, price real)"
 # real - float data type
 cursor.execute(create_item_table)
 
-query = "INSERT INTO items VALUES ('phone', 11000.99)"
-cursor.execute(query)
+#query = "INSERT INTO items VALUES ('phone', 11000.99)"
+#cursor.execute(query)
 
 
 connection.commit()
