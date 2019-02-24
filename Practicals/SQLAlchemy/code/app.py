@@ -7,9 +7,14 @@ from resources.user import UserRegister
 from resources.item import Item, ItemList
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #flask_SQLAlchemy tracks all changes takes more resources, we turn it OFF as SQLAlchemy has its own library that does tracking
 app.secret_key = 'rizwan' #key to excrypt the data
 api = Api(app)
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 jwt =  JWT(app, authenticate, identity) #/auth
 

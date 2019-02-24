@@ -56,3 +56,12 @@ class ItemModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     price = db.Column(db.Float(precision=2))
+
+------ PART 4 ------
+1) In app.py for  SQLAlchemy to know database, include
+  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+
+2) Creating table using SQLAlchemy
+@app.before_first_request #decorator - create DB before any 1st request that comes to app
+def create_tables():
+    db.create_all()

@@ -7,7 +7,7 @@ create_user_table = "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, us
 # INTEGER PRIMARY KEY - Create auto incrementing ID for users, so we need to input the ID everytime
 cursor.execute(create_user_table)
 
-create_item_table = "CREATE TABLE IF NOT EXISTS items(name text, price real)"
+create_item_table = "CREATE TABLE IF NOT EXISTS items(id INTEGER PRIMARY KEY,name text, price real)"
 # real - float data type
 cursor.execute(create_item_table)
 
