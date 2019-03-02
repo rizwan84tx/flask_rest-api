@@ -1,0 +1,39 @@
+1) create VM with Ubuntu 16+
+
+2) Switch to root and install postgresql
+app-get install postgresql postgresql-contrib
+
+3) Switch to 'postgres' user
+  a) sudo -i -u postgres
+  b) and validate postgresql by executing "psql"
+
+4) Create new user for application
+  a) add user appadmin (password - appadmin)
+
+5) allow 'appadmin' root privileges
+     - visudo (enter)
+     - under root add the new user update
+        appadmin ALL=(ALL:ALL) ALL
+     - ctrl-o then enter the ctrl-x
+6) vi /etc/ssh/sshd-config and set
+      - passwordAuthentication yes
+      - update "AllowUsers appadmin"
+      - save and exit
+7) run 'service ssh reload'
+
+8) Switch to postgres id and create new postgresql user (same as appadmin)
+  a) sudo -i -u postgres
+  b) createuser appadmin -P (pswd - appadmin)
+
+9) Create a database for new postgresql user
+  createdb appadmin
+
+10) Switch to unix account 'appadmin' and execute 'pqsl'; this will connect to appadmin postgresql account
+
+11) Validate connection to postgresql user 'appadmin'
+   \conninfo - validate db connection
+   \q - exit postgre
+
+12) Add password authentication while connecting to postgresql user 'appadmin'
+  a) sudo vi /etc/postgresql/10/main/pg_hba.conf
+  b) Change local all all peer -> local all all md5
