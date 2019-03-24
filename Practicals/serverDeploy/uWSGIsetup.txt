@@ -1,0 +1,60 @@
+## SETUP of uWSGI in server ##
+
+1) Create service file for Ubuntu
+root@flasksvr:/var/www/html/items-rest# vi /etc/systemd/system/uwsgi_items_rest.service
+
+2) Configure file as below
+
+[Unit]
+Description=uWSGI items REST API
+
+[Service]
+Environment=DATABASE_URL=postgres://appadmin:appadmin@localhost:5432/appadmin
+ExecStart=/var/www/items-rest/venv/bin/uwsgi --master --emperor /var/www/html/items-rest/uwsgi.ini --die-on-term --uid appadmin --gid appadmin --logto /var/www/html/items-rest/log/emperor.log
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
+
+-----
+Environment=DATABASE_URL=postgres://appadmin:appadmin@localhost:5432/appadmin
+#########################<database>://<user>:<passwd>@<server_name>:<port>/<db_name>
+ExecStart=/var/www/html/items-rest/venv/bin/uwsgi --master --emperor /var/www/html/items-rest/uwsgi.ini --die-on-term --uid appadmin --gid appadmin --logto /var/www/html/items-rest/log/emperor.log
+###Execute the uWSGI process as appadmin so that application can connect to DB
+
+3) Edit uwsgi.ini
+
+[uwsgi]
+base = /var/www/html/items-rest
+app = run #file run.py
+module = %(app) #Referring to app variable
+
+home = %(base)/venv
+pythonpath = %(base)
+
+socket = %(base)/socket.sock # Socket file for connecting uwgi with app
+
+chmod-socket = 777 #Giving full permission
+
+process = 8 #total app process
+
+threads = 8 #total thread - i.e 1 process with 1 thread
+
+harakiri = 15 #Kill itself if any error or fault encountered
+
+callable = app #Execute the app variable (mentioned above)
+
+logto = /var/www/html/items-rest/log/%n.log (log pythoon logs -%n is uwsgi)
+
+--- STARTING APP ---
+4) Delete default nginx config file
+root@flasksvr:/etc/nginx/sites-enabled# rm -f default
+
+5) start nginx
+root@flasksvr:/etc/nginx/sites-enabled# systemctl start nginx
+
+6) start uwsgi(uwsgi will start the flask app)
+root@flasksvr:/etc/nginx/sites-enabled# systemctl start uwsgi_items_rest

@@ -7,6 +7,7 @@ app-get install postgresql postgresql-contrib
   a) sudo -i -u postgres
   b) and validate postgresql by executing "psql"
 
+--CREATE UNIX USER with ROOT privileges---
 4) Create new user for application
   a) add user appadmin (password - appadmin)
 
@@ -21,6 +22,7 @@ app-get install postgresql postgresql-contrib
       - save and exit
 7) run 'service ssh reload'
 
+--LINKING OS USER to POSTGRES--
 8) Switch to postgres id and create new postgresql user (same as appadmin)
   a) sudo -i -u postgres
   b) createuser appadmin -P (pswd - appadmin)
